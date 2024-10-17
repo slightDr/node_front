@@ -22,7 +22,10 @@
 
                     <div class="footer-wrapped">
                       <div class="forget-password">
-                        <span class="forget-password-button">忘记密码</span>
+                        <span class="forget-password-button"
+                              @click="openForgetPassword">
+                          忘记密码
+                        </span>
                       </div>
                     </div>
 
@@ -71,10 +74,12 @@
       </el-footer>
     </el-container>
   </div>
+  <forget ref="forgetPassword"></forget>
 </template>
 
 <script lang="ts" setup>
   import { ref, reactive } from 'vue'
+  import forget from "./components/forget_password.vue"
 
   const activeName = ref('first');
 
@@ -96,6 +101,11 @@
     password: "",
     repassword: "",
   })
+
+  const forgetPassword = ref()
+  const openForgetPassword = () => {
+    forgetPassword.value.open()
+  }
 </script>
 
 <style lang="scss" scoped>
