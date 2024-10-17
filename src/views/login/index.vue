@@ -55,7 +55,7 @@
                     </el-form-item>
 
                     <div class="footer-button">
-                      <el-button type="primary">注册</el-button>
+                      <el-button type="primary" @click="clickRegister">注册</el-button>
                     </div>
                   </el-form>
                 </el-tab-pane>
@@ -80,10 +80,12 @@
 <script lang="ts" setup>
   import { ref, reactive } from 'vue'
   import forget from "./components/forget_password.vue"
+  import { register, login } from "@/api/login.js"
 
   const activeName = ref('first');
 
-  interface formData { // 表单接口
+  // 表单接口
+  interface formData {
     account: number;
     password: string;
     repassword ?: string;  // ?: 可以没有该参数
@@ -102,9 +104,16 @@
     repassword: "",
   })
 
+  // 打开忘记密码窗口
   const forgetPassword = ref()
   const openForgetPassword = () => {
     forgetPassword.value.open()
+  }
+
+  // 调后端注册用户
+  const clickRegister = async () => {
+    const res = await register(registerData)
+    console.log(res)
   }
 </script>
 
