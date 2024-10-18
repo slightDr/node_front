@@ -105,7 +105,7 @@
                 <el-dropdown-menu>
                   <el-dropdown-item>更改头像</el-dropdown-item>
                   <el-dropdown-item>设置账号</el-dropdown-item>
-                  <el-dropdown-item>退出登录</el-dropdown-item>
+                  <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
                 </el-dropdown-menu>
               </template>
             </el-dropdown>
@@ -128,6 +128,7 @@ import {
   Menu as IconMenu, Message, User,
 } from '@element-plus/icons-vue'
 import { reactive, toRefs, ref } from 'vue'
+import { useRouter } from "vue-router";
 
 const state = reactive({
   circleUrl:
@@ -138,6 +139,12 @@ const state = reactive({
 })
 
 const { circleUrl, squareUrl, sizeList } = toRefs(state)
+
+// 退出登录
+const router = useRouter();
+const logout = () => {
+  router.push('/login');
+}
 </script>
 
 <style lang="scss" scoped>

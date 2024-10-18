@@ -30,7 +30,7 @@
                     </div>
 
                     <div class="footer-button">
-                      <el-button type="primary">登录</el-button>
+                      <el-button type="primary" @click="clickLogin">登录</el-button>
                     </div>
 
                     <div class="footer-go-register">
@@ -79,8 +79,10 @@
 
 <script lang="ts" setup>
   import { ref, reactive } from 'vue'
+  import { ElMessage } from 'element-plus'
   import forget from "./components/forget_password.vue"
   import { register, login } from "@/api/login.js"
+  import { useRouter } from "vue-router";
 
   const activeName = ref('first');
 
@@ -107,13 +109,40 @@
   // 打开忘记密码窗口
   const forgetPassword = ref()
   const openForgetPassword = () => {
-    forgetPassword.value.open()
+    forgetPassword.value.open();
   }
 
   // 调后端注册用户
   const clickRegister = async () => {
-    const res = await register(registerData)
-    console.log(res)
+    if (registerData.password === registerData.repassword) {
+      const res = await register(registerData);
+      console.log(res);
+      ElMessage({
+        message: res.data.message,
+        type: res.data.status === 0 ? 'success' : 'error',
+      });
+      if (res.data.status === 0) {
+        activeName.value = 'first'
+      }
+    } else {
+      ElMessage.error("两次密码不一致")
+    }
+  }
+
+  // 点击登录
+  const router = useRouter()
+  const clickLogin = async () => {
+    const res = await login(loginData);
+    console.log(res);
+    ElMessage({
+      message: res.data.message,
+      type: res.data.status === 0 ? 'success' : 'error',
+    });
+    if (res.data.status === 0) {
+      const { token } = res.data;
+      localStorage.setItem('token', token);
+      await router.push('/home');
+    }
   }
 </script>
 
