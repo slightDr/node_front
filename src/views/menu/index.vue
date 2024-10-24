@@ -80,7 +80,7 @@
               <span>登录日志</span>
             </el-menu-item>
 
-            <el-menu-item index="9">
+            <el-menu-item index="set">
               <el-icon><Tools /></el-icon>
               <span>系统设置</span>
             </el-menu-item>
@@ -148,6 +148,16 @@ const logout = () => {
 </script>
 
 <style lang="scss" scoped>
+  .el-container {
+    width: 100%;
+    height: 100%;
+  }
+
+  .el-main {
+    --el-main-padding: 0;
+    background-color: #f3f4fa;
+  }
+
   .el-aside {
     height: 100vh;
     .title {

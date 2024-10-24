@@ -16,7 +16,7 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="state.forgetPasswordDialog = false">取消</el-button>
-        <el-button type="primary" @click="openChangePassword">
+        <el-button type="primary" @click="verifyAccount">
           下一步
         </el-button>
       </div>
@@ -30,17 +30,17 @@
   >
     <el-form class="login-form" :label-position="labelPosition" :rules="rules">
       <el-form-item label="新密码" prop="password">
-        <el-input v-model="forgetData.account" placeholder="请输入新密码"/>
+        <el-input v-model="forgetData.password" placeholder="请输入新密码" show-password/>
       </el-form-item>
       <el-form-item label="确认密码" prop="repassword">
-        <el-input v-model="forgetData.email" placeholder="请确认密码"/>
+        <el-input v-model="forgetData.repassword" placeholder="请确认密码" show-password/>
       </el-form-item>
     </el-form>
     <!-- 底部内容 -->
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="state.changePasswordDialog=false">取消</el-button>
-        <el-button type="primary" @click="state.changePasswordDialog=false">
+        <el-button type="primary" @click="resetPassword">
           确定
         </el-button>
       </div>
@@ -50,6 +50,8 @@
 
 <script lang="ts" setup>
 import {reactive, ref} from "vue"
+import {ElMessage} from 'element-plus'
+import { verify, updatePassword } from '@/api/login'
 
 const labelPosition = ref("top")
 
@@ -89,9 +91,34 @@ const open = () => {  // 打开弹窗
   state.forgetPasswordDialog = true;
 }
 
-const openChangePassword = () => {
-  state.forgetPasswordDialog = false;
-  state.changePasswordDialog = true;
+// 忘记密码验证邮箱
+const verifyAccount = async () => {
+  const res = await verify(forgetData);
+  console.log(res);
+  if (res.data.status === 0) {
+    ElMessage.success(res.data.message);
+    state.forgetPasswordDialog = false;
+    state.changePasswordDialog = true;
+  } else {
+    ElMessage.error(res.data.message);
+  }
+}
+
+// 忘记密码修改密码
+const resetPassword = async () => {
+  if (forgetData.password !== forgetData.repassword) {
+    ElMessage.error("两次密码不相同");
+    return;
+  }
+  const new_pwd = forgetData.password, account = forgetData.account;
+  const res = await updatePassword({account, new_pwd});
+  console.log(res);
+  if (res.data.status !== 0) {
+    ElMessage.error(res.data.message);
+  } else {
+    state.changePasswordDialog = false;
+    ElMessage.success(res.data.message);
+  }
 }
 
 defineExpose({

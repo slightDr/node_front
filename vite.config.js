@@ -2,6 +2,7 @@
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 
 const pathResolve = dir => resolve(__dirname, dir)
 
@@ -9,6 +10,10 @@ const pathResolve = dir => resolve(__dirname, dir)
 export default defineConfig({
   plugins: [
     vue(),
+    createSvgIconsPlugin({
+      iconDirs: [resolve(process.cwd(), 'src/assets/svg')],
+      symbolId: 'icon-[dir]-[name]',
+    })
   ],
   pluginOptions: {
     'style-resources-loader': {

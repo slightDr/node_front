@@ -5,7 +5,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: "/login",
+      redirect: "/menu",
     },
     {
       name: "login",
@@ -21,6 +21,11 @@ const router = createRouter({
           name: "home",
           path: "/home",  // 由menu的<router-view></router-view>渲染
           component: () => import("@/views/home/index.vue"),
+        },
+        {
+          name: "set",
+          path: "/set",  // 由menu的<router-view></router-view>渲染
+          component: () => import("@/views/set/index.vue"),
         },
       ]
     },
