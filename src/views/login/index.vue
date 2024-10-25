@@ -83,6 +83,7 @@
   import forget from "./components/forget_password.vue"
   import { register, login } from "@/api/login.js"
   import { useRouter } from "vue-router";
+  import { useUserInfo } from '@/store/user_info';
 
   const activeName = ref('first');
 
@@ -130,10 +131,12 @@
   }
 
   // 点击登录
-  const router = useRouter()
+  const router = useRouter();
+  const store = useUserInfo();
   const clickLogin = async () => {
     const res = await login(loginData);
     console.log(res);
+    const { id } = res.data.result;
     ElMessage({
       message: res.data.message,
       type: res.data.status === 0 ? 'success' : 'error',
@@ -141,9 +144,14 @@
     if (res.data.status === 0) {
       const { token } = res.data;
       localStorage.setItem('token', token);
+      console.log("login:", id);
+      store.userInfo(id);
+      // 跳转
       await router.push('/home');
     }
   }
+
+
 </script>
 
 <style lang="scss" scoped>
