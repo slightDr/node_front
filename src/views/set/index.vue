@@ -17,7 +17,7 @@
                 :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload"
               >
-                <img v-if="imageUrl" :src="imageUrl" class="avatar"/>
+                <img v-if="userStore.imageUrl" :src="userStore.imageUrl" class="avatar"/>
                 <el-icon v-else class="avatar-uploader-icon">
                   <Plus/>
                 </el-icon>
@@ -27,7 +27,7 @@
           <div class="account-info-wrapped">
             <span>用户账号：</span>
             <div class="account-info-content">
-              <el-input v-model="acount_detail.account" disabled></el-input>
+              <el-input v-model="userStore.account" disabled></el-input>
             </div>
           </div>
           <div class="account-info-wrapped">
@@ -39,7 +39,7 @@
           <div class="account-info-wrapped">
             <span>用户姓名：</span>
             <div class="account-info-content">
-              <el-input v-model="acount_detail.name"></el-input>
+              <el-input v-model="userStore.name"></el-input>
             </div>
             <div>
               <el-button type="primary" class="account-save-button">保存</el-button>
@@ -48,7 +48,7 @@
           <div class="account-info-wrapped">
             <span>用户性别：</span>
             <div class="account-info-content">
-              <el-select v-model="acount_detail.sex" placeholder="选择性别">
+              <el-select v-model="userStore.sex" placeholder="选择性别">
                 <el-option label="男" value="man" />
                 <el-option label="女" value="woman" />
               </el-select>
@@ -60,19 +60,19 @@
           <div class="account-info-wrapped">
             <span>用户身份：</span>
             <div class="account-info-content">
-              <el-input v-model="acount_detail.identity" disabled></el-input>
+              <el-input v-model="userStore.identity" disabled></el-input>
             </div>
           </div>
           <div class="account-info-wrapped">
             <span>用户部门：</span>
             <div class="account-info-content">
-              <el-input v-model="acount_detail.department" disabled></el-input>
+              <el-input v-model="userStore.department" disabled></el-input>
             </div>
           </div>
           <div class="account-info-wrapped">
             <span>用户邮箱：</span>
             <div class="account-info-content">
-              <el-input v-model="acount_detail.email"></el-input>
+              <el-input v-model="userStore.email"></el-input>
             </div>
             <div>
               <el-button type="primary" class="account-save-button">保存</el-button>
@@ -93,6 +93,8 @@ import breadCrumb from '@/components/bread_crumb.vue'
 import type {TabsPaneContext, UploadProps} from 'element-plus'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
+import { useUserInfo } from '@/store/user_info'
+import { bindAccount } from '@/api/user_info'
 
 const bread_crumb = ref()
 const item = ref({
@@ -102,15 +104,27 @@ const item = ref({
 // 默认打开标签页
 const activeName = ref('first')
 
-const imageUrl = ref('')
-
+// 头像上传成功函数
+const userStore = useUserInfo()
 const handleAvatarSuccess: UploadProps['onSuccess'] = (
   response,
-  uploadFile
 ) => {
-  imageUrl.value = URL.createObjectURL(uploadFile.raw!)
+  console.log(response);
+  if (response.status === 0) {
+    userStore.$patch({
+      imageUrl: response.image_url,
+    })
+    (async () => {
+      await bindAccount(response.only_id, userStore.account, response.image_url);
+    }) ()
+    ElMessage.success("更新头像成功");
+
+  } else {
+    ElMessage.error("更新头像失败，请重新上传");
+  }
 }
 
+// 头像上传前函数
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
   if (rawFile.type !== 'image/jpeg') {
     ElMessage.error('Avatar picture must be JPG format!')

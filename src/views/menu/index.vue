@@ -96,7 +96,7 @@
           </div>
           <div class="header-right-content">
             <el-icon :size="20"><Message/></el-icon>
-            <el-avatar :size="24" :src="circleUrl"></el-avatar>
+            <el-avatar :size="24" :src="userStore.imageUrl"></el-avatar>
             <el-dropdown>
               <span class="el-dropdown-link">
                 设置
@@ -127,18 +127,11 @@ import {
   House,
   Menu as IconMenu, Message, User,
 } from '@element-plus/icons-vue'
-import { reactive, toRefs, ref } from 'vue'
+// import { reactive, toRefs, ref } from 'vue'
 import { useRouter } from "vue-router";
+import { useUserInfo } from "@/store/user_info"
 
-const state = reactive({
-  circleUrl:
-    'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-  squareUrl:
-    'https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png',
-  sizeList: ['small', '', 'large'] as const,
-})
-
-const { circleUrl, squareUrl, sizeList } = toRefs(state)
+const userStore = useUserInfo()
 
 // 退出登录
 const router = useRouter();

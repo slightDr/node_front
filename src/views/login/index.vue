@@ -144,7 +144,6 @@
     if (res.data.status === 0) {
       const { token } = res.data;
       localStorage.setItem('token', token);
-      console.log("login:", id);
       store.userInfo(id);
       // 跳转
       await router.push('/home');
